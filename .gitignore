@@ -1,0 +1,95 @@
+# Build outputs
+bin/
+bin-int/
+out/
+x64/
+x86/
+Debug/
+Release/
+*.exp
+*.lib
+*.pdb
+*.idb
+
+# Visual Studio user-specific files
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.VC.opendb
+
+# Visual Studio cache/options directory
+.vs/
+
+# Intermediate files
+*.ilk
+*.obj
+*.pch
+*.iobj
+*.ipdb
+*.lastbuildstate
+*.tlog
+*.log
+*.recipe
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# OS specific
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Profiler output
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# Visual C++ cache files
+ipch/
+*.aps
+*.ncb
+*.opendb
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# NuGet Packages
+*.nupkg
+packages/
+**/packages/*
+!**/packages/build/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
