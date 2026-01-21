@@ -93,3 +93,97 @@ cmake_install.cmake
 Makefile
 *.cmake
 !CMakeLists.txt
+
+# Premake generated files (regenerate with GenerateProjects.bat)
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+*.local
+secrets.json
+config.local.*
+appsettings.local.json
+
+# API keys and credentials
+**/credentials/
+**/secrets/
+*.key
+*.pem
+*.p12
+*.pfx
+*.cer
+*.crt
+id_rsa*
+*.pub
+
+# Backup files
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+.#*
+\#*#
+
+# Temporary files
+*.tmp
+*.temp
+~$*
+
+# Database files (if any)
+*.db
+*.sqlite
+*.sqlite3
+
+# Archive files (temporary)
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.tgz
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+*.sublime-project
+*.sublime-workspace
+.fleet/
+
+# Session and cache
+*.cache
+.cache/
+Session.vim
+.clang-format
+.clang-tidy
+
+# Windows specific
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# macOS specific
+.AppleDouble
+.LSOverride
+._*
+
+# Linux specific
+.directory
+.Trash-*
+
+# Git merge files
+*.orig
+*.BACKUP.*
+*.BASE.*
+*.LOCAL.*
+*.REMOTE.*
+*_BACKUP_*.txt
+*_BASE_*.txt
+*_LOCAL_*.txt
+*_REMOTE_*.txt
