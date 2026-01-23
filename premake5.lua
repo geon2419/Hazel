@@ -30,6 +30,9 @@ project "Hazel"
 		"%{prj.name}/vendor/spdlog/include"
 	}
 
+	pchheader "hzpch.h"
+	pchsource "Hazel/src/hzpch.cpp"
+
 	filter "system:windows"
 		cppdialect "C++17"
 		staticruntime "On"
