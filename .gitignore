@@ -187,3 +187,11 @@ ehthumbs_vista.db
 *_BASE_*.txt
 *_LOCAL_*.txt
 *_REMOTE_*.txt
+
+# Github Copilot
+.github/agents
+.github/instrcutions
+.github/prompts
+.github/copilot-instrcutions.md
+.github/skills
+AGENTS.md
