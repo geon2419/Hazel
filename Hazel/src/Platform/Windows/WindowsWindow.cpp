@@ -41,7 +41,7 @@ namespace Hazel {
 		{
 			// TODO: glfwTerminate on system shutdown
 			int success = glfwInit();
-			HZ_CORE_ASSERT(success, "Colud not initialize GLFW!");
+			HZ_CORE_ASSERT(success, "Could not initialize GLFW!");
 			glfwSetErrorCallback(GLFWErrorCallback);
 			s_GLFWInitialized = true;
 		}
