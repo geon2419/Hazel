@@ -2,7 +2,9 @@
 
 #include "Hazel/Window.h"
 
-#include <GLFW/glfw3.h>
+#include "GLFW/glfw3.h"
+
+struct GLFWwindow;
 
 namespace Hazel {
 
