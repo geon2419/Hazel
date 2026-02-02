@@ -100,7 +100,7 @@ namespace Hazel {
 	bool ImGuiLayer::OnMouseButtonPressedEvent(MouseButtonPressedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		// NOTE: Legacy - 流立利牢 郴何 惑怕 鞘靛 诀单捞飘 规侥
+		// NOTE: Legacy - 歆侅爲鞝侅澑 雮措秬 靸來儨 頃勲摐 鞐呺嵃鞚错姼 氚╈嫕
 		// io.MouseDown[e.GetMouseButton()] = true;
 		io.AddMouseButtonEvent(e.GetMouseButton(), true);
 		return false;
@@ -109,7 +109,7 @@ namespace Hazel {
 	bool ImGuiLayer::OnMouseButtonReleasedEvent(MouseButtonReleasedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		// NOTE: Legacy - 流立利牢 郴何 惑怕 鞘靛 诀单捞飘 规侥
+		// NOTE: Legacy - 歆侅爲鞝侅澑 雮措秬 靸來儨 頃勲摐 鞐呺嵃鞚错姼 氚╈嫕
 		// io.MouseDown[e.GetMouseButton()] = false;
 		io.AddMouseButtonEvent(e.GetMouseButton(), false);
 		return false;
@@ -118,7 +118,7 @@ namespace Hazel {
 	bool ImGuiLayer::OnMouseMovedEvent(MouseMovedEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		// NOTE: Legacy - 流立利牢 郴何 惑怕 鞘靛 诀单捞飘 规侥
+		// NOTE: Legacy - 歆侅爲鞝侅澑 雮措秬 靸來儨 頃勲摐 鞐呺嵃鞚错姼 氚╈嫕
 		// io.MousePos = ImVec2(e.GetX(), e.GetY());
 		io.AddMousePosEvent(e.GetX(), e.GetY());
 		return false;
@@ -127,7 +127,7 @@ namespace Hazel {
 	bool ImGuiLayer::OnMouseScrolledEvent(MouseScrolledEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		// NOTE: Legacy - 流立利牢 郴何 惑怕 鞘靛 诀单捞飘 规侥
+		// NOTE: Legacy - 歆侅爲鞝侅澑 雮措秬 靸來儨 頃勲摐 鞐呺嵃鞚错姼 氚╈嫕
 		// io.MouseWheelH += e.GetXOffset();
 		// io.MouseWheel += e.GetYOffset();
 		io.AddMouseWheelEvent(e.GetXOffset(), e.GetYOffset());
@@ -167,10 +167,19 @@ namespace Hazel {
 	bool ImGuiLayer::OnWindowResizeEvent(WindowResizeEvent& e)
 	{
 		ImGuiIO& io = ImGui::GetIO();
-		io.DisplaySize = ImVec2(e.GetWidth(), e.GetHeight());
-		
-		io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
-		glViewport(0, 0, e.GetWidth(), e.GetHeight());
+		io.DisplaySize = ImVec2((float)e.GetWidth(), (float)e.GetHeight());
+
+		// Compute framebuffer scale from actual framebuffer size to support HiDPI.
+		GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
+		if (window)
+		{
+			int fbWidth = 0, fbHeight = 0;
+			glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+
+			float scaleX = (e.GetWidth() > 0) ? (float)fbWidth / (float)e.GetWidth() : 1.0f;
+			float scaleY = (e.GetHeight() > 0) ? (float)fbHeight / (float)e.GetHeight() : 1.0f;
+			io.DisplayFramebufferScale = ImVec2(scaleX, scaleY);
+		}
 		return false;
 	}
 }
