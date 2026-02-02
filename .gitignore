@@ -195,3 +195,8 @@ ehthumbs_vista.db
 .github/copilot-instrcutions.md
 .github/skills
 AGENTS.md
+
+# imgui
+imgui.ini
+# ImGui settings
+Sandbox/imgui.ini
