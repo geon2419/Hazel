@@ -30,13 +30,13 @@ namespace Hazel {
 		ImGui::StyleColorsDark();
 
 		ImGuiIO& io = ImGui::GetIO();
-		io.FontGlobalScale = 1.5f; // UI 크기를 150%로 확대
-		ImGui::GetStyle().ScaleAllSizes(1.5f); // 스타일 요소(패딩, 보더 등) 확대
+		io.FontGlobalScale = 1.5f; // Scale UI size to 150%
+		ImGui::GetStyle().ScaleAllSizes(1.5f); // Scale style elements (padding, borders, etc.)
 
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 
-		// 초기 Display 크기 및 스케일 설정 (HiDPI 대응 및 시작 위치 오류 방지)
+		// Initialize display size and scale (HiDPI support and start position fix)
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 
