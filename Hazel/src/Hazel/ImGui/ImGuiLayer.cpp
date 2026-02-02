@@ -30,8 +30,26 @@ namespace Hazel {
 		ImGui::StyleColorsDark();
 
 		ImGuiIO& io = ImGui::GetIO();
+		io.FontGlobalScale = 1.5f; // Scale UI size to 150%
+		ImGui::GetStyle().ScaleAllSizes(1.5f); // Scale style elements (padding, borders, etc.)
+
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+
+		// Initialize display size and scale (HiDPI support and start position fix)
+		Application& app = Application::Get();
+		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+
+		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+		if (window)
+		{
+			int fbWidth = 0, fbHeight = 0;
+			glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+
+			float scaleX = (io.DisplaySize.x > 0) ? (float)fbWidth / io.DisplaySize.x : 1.0f;
+			float scaleY = (io.DisplaySize.y > 0) ? (float)fbHeight / io.DisplaySize.y : 1.0f;
+			io.DisplayFramebufferScale = ImVec2(scaleX, scaleY);
+		}
 
 		// NOTE: TEMPORARY - Should eventually use Hazel key codes
 		io.KeyMap[ImGuiKey_Tab] = GLFW_KEY_TAB;
@@ -78,6 +96,7 @@ namespace Hazel {
 		ImGui::NewFrame();
 
 		static bool show = true;
+		ImGui::SetNextWindowPos(ImVec2(100, 100), ImGuiCond_FirstUseEver);
 		ImGui::ShowDemoWindow(&show);
 
 		ImGui::Render();
