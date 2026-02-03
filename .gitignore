@@ -195,6 +195,7 @@ ehthumbs_vista.db
 .github/copilot-instrcutions.md
 .github/skills
 AGENTS.md
+prompts/*.md
 
 # imgui
 imgui.ini
