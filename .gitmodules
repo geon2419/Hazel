@@ -3,7 +3,7 @@
 	url = https://github.com/gabime/spdlog
 [submodule "Hazel/vendor/GLFW"]
 	path = Hazel/vendor/GLFW
-	url = https://github.com/TheCherno/glfw.git
+	url = https://github.com/geon2419/glfw
 [submodule "Hazel/vendor/imgui"]
 	path = Hazel/vendor/imgui
 	url = https://github.com/geon2419/imgui.git
