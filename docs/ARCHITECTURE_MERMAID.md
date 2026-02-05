@@ -53,6 +53,11 @@ graph TB
         WindowInt[Window<br/>Interface]
         WinWindow[WindowsWindow<br/>GLFW Implementation]
     end
+
+    subgraph "Renderer"
+        ContextInt[GraphicsContext<br/>Interface]
+        GLContext[OpenGLContext<br/>Implementation]
+    end
     
     subgraph "Event System"
         Event[Event<br/>Base Class]
@@ -80,6 +85,8 @@ graph TB
     LayerStack -->|Contains| Layer
     ImGuiLayer -.->|Inherits| Layer
     WindowInt <-.->|Implements| WinWindow
+    WindowInt -->|Uses| ContextInt
+    ContextInt <-.->|Implements| GLContext
     Input <-.->|Implements| WinInput
     WinInput -->|Uses| KeyCodes
     WinInput -->|Uses| MouseCodes
@@ -262,6 +269,7 @@ classDiagram
     class WindowsWindow {
         -m_Window: GLFWwindow*
         -m_Data: WindowData
+        -m_Context: GraphicsContext*
         +OnUpdate() void
         +GetWidth() unsigned int
         +GetHeight() unsigned int
@@ -269,6 +277,18 @@ classDiagram
         +SetVSync(bool) void
         -Init(WindowProps&) void
         -Shutdown() void
+    }
+
+    class GraphicsContext {
+        <<interface>>
+        +Init() void
+        +SwapBuffers() void
+    }
+
+    class OpenGLContext {
+        -m_WindowHandle: GLFWwindow*
+        +Init() void
+        +SwapBuffers() void
     }
     
     class Layer {
@@ -303,6 +323,8 @@ classDiagram
     Application --> Window : owns
     Application --> LayerStack : manages
     Window <|.. WindowsWindow : implements
+    WindowsWindow --> GraphicsContext : uses
+    GraphicsContext <|.. OpenGLContext : implements
     Layer <|-- ImGuiLayer : extends
     LayerStack --> Layer : contains
 ```
