@@ -45,8 +45,16 @@ namespace Hazel {
 
 		Application& app = Application::Get();
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+		
+		// NOTE: HiDPI
+		float xscale = 1.0f;
+		float yscale = 1.0f;
+		glfwGetWindowContentScale(window, &xscale, &yscale);
+		float scale = (xscale > 0.0f) ? xscale : 1.0f;
+		io.FontGlobalScale = scale;
+		ImGui::GetStyle().ScaleAllSizes(scale);
 
-		ImGui_ImplGlfw_InitForOpenGL(window, false);
+		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 410");
 	}
 
@@ -75,6 +83,16 @@ namespace Hazel {
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
 		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+		
+		// NOTE: HiDPI
+		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+		int framebufferWidth = 0;
+		int framebufferHeight = 0;
+		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+		if (io.DisplaySize.x > 0.0f && io.DisplaySize.y > 0.0f)
+			io.DisplayFramebufferScale = ImVec2(
+				(float)framebufferWidth / io.DisplaySize.x,
+				(float)framebufferHeight / io.DisplaySize.y);
 
 		// Rendering
 		ImGui::Render();

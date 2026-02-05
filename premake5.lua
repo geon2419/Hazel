@@ -96,6 +96,11 @@ project "Hazel"
 		runtime "Debug"
 		symbols "on"
 
+		defines
+		{
+			"HZ_ENABLE_ASSERTS"
+		}
+
 	filter "configurations:Release"
 		defines "HZ_RELEASE"
 		runtime "Release"
@@ -150,6 +155,11 @@ project "Sandbox"
 		defines "HZ_DEBUG"
 		runtime "Debug"
 		symbols "on"
+
+		defines
+		{
+			"HZ_ENABLE_ASSERTS"
+		}
 
 	filter "configurations:Release"
 		defines "HZ_RELEASE"
