@@ -11,7 +11,6 @@ namespace Hazel {
 		HZ_CORE_ASSERT(windowHandle, "Window handle is null!");
 	}
 	
-	
 	void OpenGLContext::Init()
 	{
 		glfwMakeContextCurrent(m_WindowHandle);
