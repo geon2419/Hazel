@@ -24,7 +24,7 @@ namespace Hazel {
 
 	float WindowsInput::GetMouseXImpl()
 	{
-		// NOTE: C++ 17 ÀÌ»ó
+		// NOTE: C++ 17
 		auto [x, y] = GetMousePositionImpl();
 		return (float)x;
 	}
