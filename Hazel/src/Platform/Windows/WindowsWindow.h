@@ -31,7 +31,7 @@ namespace Hazel {
 		virtual void Shutdown();
 	private:
 		GLFWwindow* m_Window;
-		GraphicsContext* m_Context;
+		GraphicsContext* m_Context = nullptr;
 
 		struct WindowData
 		{
