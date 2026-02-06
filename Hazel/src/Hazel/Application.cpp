@@ -1,11 +1,12 @@
 #include "hzpch.h"
 #include "Application.h"
 
-#include "Hazel/Log.h"
+#include "Core.h"
+#include "Hazel/ImGui/ImGuiLayer.h"
+#include "Hazel/Renderer/Buffer.h"
 
 #include <glad/glad.h>
 
-#include "Hazel/ImGui/ImGuiLayer.h"
 
 namespace Hazel {
 
@@ -28,15 +29,13 @@ namespace Hazel {
 		glGenVertexArrays(1, &m_VertexArray);
 		glBindVertexArray(m_VertexArray);
 
-		// DX11에서는 ID3D11Buffer + IASetVertexBuffers 
-		glGenBuffers(1, &m_VertexBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-
 		float vertices[3 * 3] = {
 			-0.5f, -0.5f, 0.0f,
 			 0.5f, -0.5f, 0.0f,
 			 0.0f,  0.5f, 0.0f
 		};
+
+		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
 		glBufferData(
 			GL_ARRAY_BUFFER,
@@ -55,17 +54,9 @@ namespace Hazel {
 			nullptr
 		);
 
-		// DX11에서는 ID3D11Buffer + IASetIndexBuffer
-		glGenBuffers(1, &m_IndexBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
-
 		unsigned int indices[3] = { 0, 1, 2 };
-		glBufferData(
-			GL_ELEMENT_ARRAY_BUFFER,
-			sizeof(indices),
-			indices,
-			GL_STATIC_DRAW
-		);
+		const uint32_t indexCount = sizeof(indices) / sizeof(uint32_t);
+		m_IndexBuffer.reset(IndexBuffer::Create(indices, indexCount));
 
 		std::string vertexSource = R"(
 			#version 330 core
@@ -138,7 +129,7 @@ namespace Hazel {
 			// OpenGL은 더 추상화 되어있기 때문에 VAO 하나로 처리
 			glBindVertexArray(m_VertexArray);
 			// DX11에서는 IASetPrimitiveTopology + DrawIndexed
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
