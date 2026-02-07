@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Hazel/Renderer/VertexArray.h"
+#include "Hazel/Renderer/Buffer.h"
 
 namespace Hazel {
 
@@ -8,7 +9,7 @@ namespace Hazel {
 	{
 	public:
 		OpenGLVertexArray();
-		virtual ~OpenGLVertexArray();
+		virtual ~OpenGLVertexArray() override;
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
