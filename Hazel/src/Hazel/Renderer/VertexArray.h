@@ -2,6 +2,9 @@
 
 #include "Hazel/Renderer/Buffer.h"
 
+#include <memory>
+#include <vector>
+
 namespace Hazel {
 
 	class VertexArray

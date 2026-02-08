@@ -1,6 +1,10 @@
 #pragma once
 
 #include "RendererAPI.h"
+#include "VertexArray.h"
+
+#include <memory>
+#include <glm/fwd.hpp>
 
 namespace Hazel {
 
