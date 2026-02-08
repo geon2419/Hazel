@@ -1,6 +1,9 @@
 #pragma once
 
+#include "VertexArray.h"
+
 #include <glm/fwd.hpp>
+#include <memory>
 
 namespace Hazel {
 

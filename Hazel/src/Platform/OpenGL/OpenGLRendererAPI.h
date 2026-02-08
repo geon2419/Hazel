@@ -3,6 +3,9 @@
 #include "Hazel/Renderer/RendererAPI.h"
 #include "Hazel/Renderer/VertexArray.h"
 
+#include <glm/fwd.hpp>
+#include <memory>
+
 namespace Hazel {
 	
 	class OpenGLRendererAPI : public RendererAPI

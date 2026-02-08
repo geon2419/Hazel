@@ -1,6 +1,6 @@
 #include "hzpch.h"
 #include "RenderCommand.h"
-
+#include "RendererAPI.h"
 #include "Platform/OpenGL/OpenGLRendererAPI.h"
 
 namespace Hazel {
