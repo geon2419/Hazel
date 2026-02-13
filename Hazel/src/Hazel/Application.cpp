@@ -17,7 +17,7 @@ namespace Hazel {
 		HZ_CORE_ASSERT(!s_Instance, "Application already exists!");
 		s_Instance = this;
 
-		m_Window = std::unique_ptr<Window>(Window::Create());
+		m_Window = Window::Create();
 		m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
 
 		m_ImGuiLayer = new ImGuiLayer();
@@ -57,7 +57,7 @@ namespace Hazel {
 	{
 		while (m_Running)
 		{
-			float time = (float)glfwGetTime(); // TODO: Platform::GetTime()
+			float time = static_cast<float>(glfwGetTime()); // TODO: Platform::GetTime()
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 

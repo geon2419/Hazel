@@ -29,7 +29,7 @@ namespace Hazel {
 	{
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
-		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		ImGuiIO& io = ImGui::GetIO(); static_cast<void>(io);
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
@@ -82,7 +82,7 @@ namespace Hazel {
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::Get();
-		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
+		io.DisplaySize = ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
 		
 		// NOTE: HiDPI
 		GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
@@ -91,8 +91,8 @@ namespace Hazel {
 		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 		if (io.DisplaySize.x > 0.0f && io.DisplaySize.y > 0.0f)
 			io.DisplayFramebufferScale = ImVec2(
-				(float)framebufferWidth / io.DisplaySize.x,
-				(float)framebufferHeight / io.DisplaySize.y);
+				static_cast<float>(framebufferWidth) / io.DisplaySize.x,
+				static_cast<float>(framebufferHeight) / io.DisplaySize.y);
 
 		// Rendering
 		ImGui::Render();
