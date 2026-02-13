@@ -18,9 +18,9 @@ namespace Hazel {
 		HZ_CORE_ERROR("GLFW Error ({0}): {1}", error, description);
 	}
 
-	Window* Window::Create(const WindowProps& props)
+	std::unique_ptr<Window> Window::Create(const WindowProps& props)
 	{
-		return new WindowsWindow(props);
+		return std::make_unique<WindowsWindow>(props);
 	}
 
 	WindowsWindow::WindowsWindow(const WindowProps& props)
@@ -51,7 +51,7 @@ namespace Hazel {
 		}
 
 		m_Window = glfwCreateWindow(static_cast<int>(props.Width), static_cast<int>(props.Height), m_Data.Title.c_str(), nullptr, nullptr);
-		m_Context = new OpenGLContext(m_Window);
+		m_Context = std::make_unique<OpenGLContext>(m_Window);
 		m_Context->Init();
 
 		glfwSetWindowUserPointer(m_Window, &m_Data);
@@ -149,6 +149,7 @@ namespace Hazel {
 
 	void WindowsWindow::Shutdown()
 	{
+		m_Context.reset();
 		glfwDestroyWindow(m_Window);
 	}
 
