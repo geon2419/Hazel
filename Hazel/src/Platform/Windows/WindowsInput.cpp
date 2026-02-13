@@ -26,7 +26,7 @@ namespace Hazel {
 	{
 		// NOTE: C++ 17
 		auto [x, y] = GetMousePositionImpl();
-		return (float)x;
+		return static_cast<float>(x);
 	}
 
 	float WindowsInput::GetMouseYImpl()
@@ -34,7 +34,7 @@ namespace Hazel {
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
-		return (float)ypos;
+		return static_cast<float>(ypos);
 	}
 
 	std::pair<float, float> WindowsInput::GetMousePositionImpl()
@@ -42,6 +42,6 @@ namespace Hazel {
 		GLFWwindow* window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
-		return { (float)xpos, (float)ypos };
+		return { static_cast<float>(xpos), static_cast<float>(ypos) };
 	}
 }
