@@ -54,6 +54,36 @@ jobs:
             exit 1
           }
 
+      - name: Ensure Premake is available
+        shell: pwsh
+        run: |
+          $premakeExe = "vendor/bin/premake/premake5.exe"
+          if (Test-Path -Path $premakeExe) {
+            Write-Host "Premake found at $premakeExe"
+            exit 0
+          }
+
+          $premakeVersion = "5.0.0-beta2"
+          $premakeAsset = "premake-$premakeVersion-windows.zip"
+          $premakeDir = "vendor/bin/premake"
+          $zipPath = Join-Path $env:RUNNER_TEMP $premakeAsset
+          $downloadUrl = "https://github.com/premake/premake-core/releases/download/v$premakeVersion/$premakeAsset"
+          $expectedSha256 = "87CFA10ED52FD1F4E835F738AC1033FF302035758671400FEC078B700C622C54"
+
+          New-Item -ItemType Directory -Force -Path $premakeDir | Out-Null
+          Invoke-WebRequest -Uri $downloadUrl -OutFile $zipPath
+
+          $actualSha256 = (Get-FileHash -Path $zipPath -Algorithm SHA256).Hash
+          if ($actualSha256 -ne $expectedSha256) {
+            throw "Premake checksum mismatch. Expected $expectedSha256 but got $actualSha256."
+          }
+
+          Expand-Archive -Path $zipPath -DestinationPath $premakeDir -Force
+
+          if (-not (Test-Path -Path $premakeExe)) {
+            throw "Premake setup failed: $premakeExe not found after download."
+          }
+
       - name: Generate solution with Premake
         shell: cmd
         run: vendor\bin\premake\premake5.exe vs2022
