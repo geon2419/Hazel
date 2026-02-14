@@ -1,5 +1,13 @@
 # Hazel - A Modern 3D Engine
 
+## Development
+
+### Lint
+
+- 전체 lint 실행: `pwsh ./tools/lint.ps1 -Mode all`
+- 포맷 자동 수정: `pwsh ./tools/lint.ps1 -Mode format -Fix`
+- 경고 게이트만 실행: `pwsh ./tools/lint.ps1 -Mode warnings -Enforcement blocking`
+
 ## Reference
 
 The Cherno [Game Engine series](https://www.youtube.com/playlist?list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT)

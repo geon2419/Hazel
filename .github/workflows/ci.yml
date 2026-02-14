@@ -14,6 +14,194 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  windows-lint:
+    name: ci/windows-lint
+    runs-on: windows-2022
+    timeout-minutes: 25
+    env:
+      PREMAKE_VERSION: 5.0.0-beta2
+      PREMAKE_SHA256: 87CFA10ED52FD1F4E835F738AC1033FF302035758671400FEC078B700C622C54
+      CLANG_FORMAT_CACHE_VERSION: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Optional clean workspace (self-hosted)
+        if: ${{ runner.environment == 'self-hosted' && vars.CI_ENABLE_CLEAN == 'true' }}
+        shell: pwsh
+        run: git clean -ffdx
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Validate dependency submodules
+        shell: pwsh
+        run: |
+          $requiredPaths = @(
+            "Hazel/vendor/imgui",
+            "Hazel/vendor/spdlog"
+          )
+
+          $missing = @()
+          foreach ($path in $requiredPaths) {
+            if (-not (Test-Path -Path $path)) {
+              $missing += $path
+            }
+          }
+
+          if ($missing.Count -gt 0) {
+            Write-Error ("Submodule sync failed: missing required paths: " + ($missing -join ", "))
+            exit 1
+          }
+
+      - name: Cache Premake
+        id: cache-premake
+        uses: actions/cache@v4
+        with:
+          path: vendor/bin/premake
+          key: premake-${{ runner.os }}-${{ env.PREMAKE_VERSION }}-${{ env.PREMAKE_SHA256 }}
+
+      - name: Cache clang-format
+        id: cache-clang-format
+        uses: actions/cache@v4
+        with:
+          path: vendor/bin/llvm
+          key: clang-format-${{ runner.os }}-${{ env.CLANG_FORMAT_CACHE_VERSION }}
+
+      - name: Print Premake cache status
+        shell: pwsh
+        run: |
+          $cacheHit = "${{ steps.cache-premake.outputs.cache-hit }}"
+          if ($cacheHit -eq "true") {
+            Write-Host "Premake cache hit."
+          } elseif ($cacheHit -eq "false") {
+            Write-Host "Premake cache miss."
+          } else {
+            Write-Host "Premake cache status unavailable."
+          }
+
+      - name: Print clang-format cache status
+        shell: pwsh
+        run: |
+          $cacheHit = "${{ steps.cache-clang-format.outputs.cache-hit }}"
+          if ($cacheHit -eq "true") {
+            Write-Host "clang-format cache hit."
+          } elseif ($cacheHit -eq "false") {
+            Write-Host "clang-format cache miss."
+          } else {
+            Write-Host "clang-format cache status unavailable."
+          }
+
+      - name: Ensure Premake is available
+        shell: pwsh
+        run: |
+          $premakeExe = "vendor/bin/premake/premake5.exe"
+          if (Test-Path -Path $premakeExe) {
+            Write-Host "Premake found at $premakeExe"
+            exit 0
+          }
+
+          $premakeVersion = $env:PREMAKE_VERSION
+          $premakeAsset = "premake-$premakeVersion-windows.zip"
+          $premakeDir = "vendor/bin/premake"
+          $zipPath = Join-Path $env:RUNNER_TEMP $premakeAsset
+          $downloadUrl = "https://github.com/premake/premake-core/releases/download/v$premakeVersion/$premakeAsset"
+          $expectedSha256 = $env:PREMAKE_SHA256
+
+          New-Item -ItemType Directory -Force -Path $premakeDir | Out-Null
+          Invoke-WebRequest -Uri $downloadUrl -OutFile $zipPath
+
+          $actualSha256 = (Get-FileHash -Path $zipPath -Algorithm SHA256).Hash
+          if ($actualSha256 -ne $expectedSha256) {
+            throw "Premake checksum mismatch. Expected $expectedSha256 but got $actualSha256."
+          }
+
+          Expand-Archive -Path $zipPath -DestinationPath $premakeDir -Force
+
+          if (-not (Test-Path -Path $premakeExe)) {
+            throw "Premake setup failed: $premakeExe not found after download."
+          }
+
+      - name: Generate solution with Premake
+        shell: cmd
+        run: vendor\bin\premake\premake5.exe vs2022
+
+      - name: Ensure clang-format is available
+        shell: pwsh
+        run: |
+          function Find-ClangFormat {
+            $onPath = Get-Command clang-format -ErrorAction SilentlyContinue
+            if ($onPath -and (Test-Path -Path $onPath.Source)) {
+              return $onPath.Source
+            }
+
+            $candidates = New-Object System.Collections.Generic.List[string]
+            $candidates.Add("C:\Program Files\LLVM\bin\clang-format.exe")
+
+            $vsRoots = @(
+              "C:\Program Files\Microsoft Visual Studio\2022",
+              "C:\Program Files\Microsoft Visual Studio\18"
+            )
+            $editions = @("Enterprise", "Professional", "Community", "BuildTools")
+            $llvmBins = @(
+              "VC\Tools\Llvm\x64\bin\clang-format.exe",
+              "VC\Tools\Llvm\bin\clang-format.exe",
+              "VC\Tools\Llvm\ARM64\bin\clang-format.exe"
+            )
+
+            foreach ($vsRoot in $vsRoots) {
+              foreach ($edition in $editions) {
+                foreach ($llvmBin in $llvmBins) {
+                  $candidates.Add((Join-Path (Join-Path $vsRoot $edition) $llvmBin))
+                }
+              }
+            }
+
+            $vsBase = "C:\Program Files\Microsoft Visual Studio"
+            if (Test-Path -Path $vsBase) {
+              $dynamicCandidates = @(Get-ChildItem -Path $vsBase -Recurse -Filter clang-format.exe -ErrorAction SilentlyContinue |
+                Where-Object { $_.FullName -match '\\VC\\Tools\\Llvm\\' } |
+                Select-Object -ExpandProperty FullName)
+              foreach ($candidate in $dynamicCandidates) {
+                $candidates.Add($candidate)
+              }
+            }
+
+            return ($candidates | Select-Object -Unique | Where-Object { Test-Path -Path $_ } | Select-Object -First 1)
+          }
+
+          $cachedExe = "vendor/bin/llvm/bin/clang-format.exe"
+          $cachedBin = Split-Path -Path $cachedExe -Parent
+
+          if (-not (Test-Path -Path $cachedExe)) {
+            $sourceExe = Find-ClangFormat
+
+            if (-not $sourceExe) {
+              choco install llvm --no-progress -y
+              $sourceExe = "C:\Program Files\LLVM\bin\clang-format.exe"
+            }
+
+            if (-not (Test-Path -Path $sourceExe)) {
+              throw "clang-format setup failed: source executable not found."
+            }
+
+            $sourceBin = Split-Path -Path $sourceExe -Parent
+            New-Item -ItemType Directory -Force -Path $cachedBin | Out-Null
+            Copy-Item -Path $sourceExe -Destination $cachedExe -Force
+            Copy-Item -Path (Join-Path $sourceBin "*.dll") -Destination $cachedBin -Force -ErrorAction SilentlyContinue
+          }
+
+          $cachedBin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          & $cachedExe --version
+
+      - name: Run lint (advisory)
+        shell: pwsh
+        run: .\tools\lint.ps1 -Mode all -Enforcement advisory
+
   windows-debug-tests:
     name: ci/windows-debug-tests
     runs-on: windows-2022
