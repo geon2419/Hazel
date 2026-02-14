@@ -1,0 +1,11 @@
+#!/bin/sh
+
+pwsh -NoProfile -ExecutionPolicy Bypass -File "./tools/lint.ps1" -Mode all -Enforcement blocking
+status=$?
+
+if [ $status -ne 0 ]; then
+  echo "pre-commit: lint failed"
+  exit $status
+fi
+
+exit 0

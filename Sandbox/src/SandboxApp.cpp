@@ -8,33 +8,27 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 class ExampleLayer : public Hazel::Layer
 {
-public:
-	ExampleLayer()
-		: Layer("Example"),
-		m_Camera(-1.6f, 1.6f, -0.9f, 0.9f),
-		m_CameraPosition(0.0f, 0.0f, 0.0f)
+  public:
+	ExampleLayer() : Layer("Example"), m_Camera(-1.6f, 1.6f, -0.9f, 0.9f), m_CameraPosition(0.0f, 0.0f, 0.0f)
 	{
 		m_VertexArray.reset(Hazel::VertexArray::Create());
 
 		float vertices[3 * 7] = {
-			-0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f, // Pinkish
-			 0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f, // Bluish
-			 0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f  // Yellowish
+		    -0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f, // Pinkish
+		    0.5f,  -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f, // Bluish
+		    0.0f,  0.5f,  0.0f, 0.8f, 0.8f, 0.2f, 1.0f  // Yellowish
 		};
 
 		std::shared_ptr<Hazel::VertexBuffer> vertexBuffer;
 		vertexBuffer.reset(Hazel::VertexBuffer::Create(vertices, sizeof(vertices)));
 
-		vertexBuffer->SetLayout({
-			{ Hazel::ShaderDataType::Float3, "a_Position" },
-			{ Hazel::ShaderDataType::Float4, "a_Color"  }
-			});
+		vertexBuffer->SetLayout(
+		    {{Hazel::ShaderDataType::Float3, "a_Position"}, {Hazel::ShaderDataType::Float4, "a_Color"}});
 		m_VertexArray->AddVertexBuffer(vertexBuffer);
 
-		unsigned int indices[3] = { 0, 1, 2 };
+		unsigned int indices[3] = {0, 1, 2};
 		const uint32_t indexCount = sizeof(indices) / sizeof(uint32_t);
 
 		std::shared_ptr<Hazel::IndexBuffer> indexBuffer;
@@ -44,20 +38,17 @@ public:
 		m_SquareVA.reset(Hazel::VertexArray::Create());
 
 		float squareVertices[3 * 4] = {
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f,
-			-0.5f,  0.5f, 0.0f,
+		    -0.5f, -0.5f, 0.0f, 0.5f, -0.5f, 0.0f, 0.5f, 0.5f, 0.0f, -0.5f, 0.5f, 0.0f,
 		};
 
 		std::shared_ptr<Hazel::VertexBuffer> squareVB;
 		squareVB.reset(Hazel::VertexBuffer::Create(squareVertices, sizeof(squareVertices)));
 		squareVB->SetLayout({
-			{ Hazel::ShaderDataType::Float3, "a_Position" },
-			});
+		    {Hazel::ShaderDataType::Float3, "a_Position"},
+		});
 		m_SquareVA->AddVertexBuffer(squareVB);
 
-		unsigned int squareIndices[6] = { 0, 1, 2, 2, 3, 0 };
+		unsigned int squareIndices[6] = {0, 1, 2, 2, 3, 0};
 		const uint32_t squareIndexCount = sizeof(squareIndices) / sizeof(uint32_t);
 		std::shared_ptr<Hazel::IndexBuffer> squareIB;
 		squareIB.reset(Hazel::IndexBuffer::Create(squareIndices, squareIndexCount));
@@ -175,7 +166,8 @@ public:
 		glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->Bind();
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)
+		    ->UploadUniformFloat3("u_Color", m_SquareColor);
 
 		for (int y = 0; y < 20; y++)
 		{
@@ -188,7 +180,7 @@ public:
 		}
 
 		Hazel::Renderer::Submit(m_Shader, m_VertexArray);
-		
+
 		Hazel::Renderer::EndScene();
 	}
 
@@ -199,11 +191,9 @@ public:
 		ImGui::End();
 	}
 
-	void OnEvent(Hazel::Event& event) override
-	{
-	}
+	void OnEvent(Hazel::Event& event) override {}
 
-private:
+  private:
 	std::shared_ptr<Hazel::Shader> m_Shader;
 	std::shared_ptr<Hazel::VertexArray> m_VertexArray;
 
@@ -211,29 +201,21 @@ private:
 	std::shared_ptr<Hazel::VertexArray> m_SquareVA;
 
 	Hazel::OrthographicCamera m_Camera;
-	glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 0.0f };
+	glm::vec3 m_CameraPosition = {0.0f, 0.0f, 0.0f};
 	float m_CameraMoveSpeed = 5.0f;
 
 	float m_CameraRotation = 0.0f;
 	float m_CameraRotationSpeed = 180.0f;
 
-	glm::vec3 m_SquareColor = { 0.2f, 0.3f, 0.8f };
+	glm::vec3 m_SquareColor = {0.2f, 0.3f, 0.8f};
 };
 
 class Sandbox : public Hazel::Application
 {
-public:
-	Sandbox()
-	{
-		PushLayer(new ExampleLayer());
-	}
+  public:
+	Sandbox() { PushLayer(new ExampleLayer()); }
 
-	~Sandbox()
-	{
-	}
+	~Sandbox() {}
 };
 
-Hazel::Application* Hazel::CreateApplication()
-{
-	return new Sandbox();
-}
+Hazel::Application* Hazel::CreateApplication() { return new Sandbox(); }

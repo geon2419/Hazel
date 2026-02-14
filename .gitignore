@@ -161,6 +161,7 @@ id_rsa*
 .cache/
 Session.vim
 .clang-format
+!.clang-format
 .clang-tidy
 
 # Windows specific
