@@ -1,0 +1,75 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-debug-tests:
+    name: ci/windows-debug-tests
+    runs-on: windows-2022
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Optional clean workspace (self-hosted)
+        if: ${{ runner.environment == 'self-hosted' && vars.CI_ENABLE_CLEAN == 'true' }}
+        shell: pwsh
+        run: git clean -ffdx
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Validate dependency submodules
+        shell: pwsh
+        run: |
+          $requiredPaths = @(
+            "Hazel/vendor/imgui",
+            "Hazel/vendor/spdlog"
+          )
+
+          $missing = @()
+          foreach ($path in $requiredPaths) {
+            if (-not (Test-Path -Path $path)) {
+              $missing += $path
+            }
+          }
+
+          if ($missing.Count -gt 0) {
+            Write-Error ("Submodule sync failed: missing required paths: " + ($missing -join ", "))
+            exit 1
+          }
+
+      - name: Generate solution with Premake
+        shell: cmd
+        run: vendor\bin\premake\premake5.exe vs2022
+
+      - name: Build Hazel-Test (Debug x64)
+        shell: cmd
+        run: msbuild Hazel.sln /m /t:Hazel-Test /p:Configuration=Debug /p:Platform=x64 /verbosity:minimal
+
+      - name: Run tests (Catch2 JUnit)
+        shell: cmd
+        run: bin\Debug-windows-x86_64\Hazel-Test\Hazel-Test.exe -r junit -o test-results.xml
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hazel-test-results
+          path: test-results.xml
+          if-no-files-found: warn
