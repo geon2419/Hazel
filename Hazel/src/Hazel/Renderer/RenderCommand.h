@@ -6,26 +6,22 @@
 #include <memory>
 #include <glm/fwd.hpp>
 
-namespace Hazel {
+namespace Hazel
+{
 
-	class RenderCommand
+class RenderCommand
+{
+  public:
+	inline static void SetClearColor(const glm::vec4& color) { s_RendererAPI->SetClearColor(color); }
+
+	inline static void Clear() { s_RendererAPI->Clear(); }
+
+	inline static void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
 	{
-	public:
-		inline static void SetClearColor(const glm::vec4& color)
-		{
-			s_RendererAPI->SetClearColor(color);
-		}
+		s_RendererAPI->DrawIndexed(vertexArray);
+	}
 
-		inline static void Clear()
-		{
-			s_RendererAPI->Clear();
-		}		
-
-		inline static void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray)
-		{
-			s_RendererAPI->DrawIndexed(vertexArray);
-		}
-	private:
-		static RendererAPI* s_RendererAPI;
-	};
-}
+  private:
+	static RendererAPI* s_RendererAPI;
+};
+} // namespace Hazel
