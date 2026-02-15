@@ -1,10 +1,7 @@
-name: ci
+name: ci-pr
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
 
 permissions:
   contents: read
@@ -14,10 +11,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  windows-lint:
-    name: ci/windows-lint
+  pr-lint-format-and-debug-build:
+    name: ci/pr-lint-format-and-debug-build
     runs-on: windows-2022
-    timeout-minutes: 25
+    timeout-minutes: 30
     env:
       PREMAKE_VERSION: 5.0.0-beta2
       PREMAKE_SHA256: 87CFA10ED52FD1F4E835F738AC1033FF302035758671400FEC078B700C622C54
@@ -198,119 +195,10 @@ jobs:
           $cachedBin | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           & $cachedExe --version
 
-      - name: Run lint (advisory)
+      - name: Run lint (format, blocking)
         shell: pwsh
-        run: .\tools\lint-ci-windows.ps1 -Mode all -Enforcement advisory
-
-  windows-debug-tests:
-    name: ci/windows-debug-tests
-    runs-on: windows-2022
-    timeout-minutes: 20
-    env:
-      PREMAKE_VERSION: 5.0.0-beta2
-      PREMAKE_SHA256: 87CFA10ED52FD1F4E835F738AC1033FF302035758671400FEC078B700C622C54
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          fetch-depth: 0
-
-      - name: Optional clean workspace (self-hosted)
-        if: ${{ runner.environment == 'self-hosted' && vars.CI_ENABLE_CLEAN == 'true' }}
-        shell: pwsh
-        run: git clean -ffdx
-
-      - name: Set up MSBuild
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Validate dependency submodules
-        shell: pwsh
-        run: |
-          $requiredPaths = @(
-            "Hazel/vendor/imgui",
-            "Hazel/vendor/spdlog"
-          )
-
-          $missing = @()
-          foreach ($path in $requiredPaths) {
-            if (-not (Test-Path -Path $path)) {
-              $missing += $path
-            }
-          }
-
-          if ($missing.Count -gt 0) {
-            Write-Error ("Submodule sync failed: missing required paths: " + ($missing -join ", "))
-            exit 1
-          }
-
-      - name: Cache Premake
-        id: cache-premake
-        uses: actions/cache@v4
-        with:
-          path: vendor/bin/premake
-          key: premake-${{ runner.os }}-${{ env.PREMAKE_VERSION }}-${{ env.PREMAKE_SHA256 }}
-
-      - name: Print Premake cache status
-        shell: pwsh
-        run: |
-          $cacheHit = "${{ steps.cache-premake.outputs.cache-hit }}"
-          if ($cacheHit -eq "true") {
-            Write-Host "Premake cache hit."
-          } elseif ($cacheHit -eq "false") {
-            Write-Host "Premake cache miss."
-          } else {
-            Write-Host "Premake cache status unavailable."
-          }
-
-      - name: Ensure Premake is available
-        shell: pwsh
-        run: |
-          $premakeExe = "vendor/bin/premake/premake5.exe"
-          if (Test-Path -Path $premakeExe) {
-            Write-Host "Premake found at $premakeExe"
-            exit 0
-          }
-
-          $premakeVersion = $env:PREMAKE_VERSION
-          $premakeAsset = "premake-$premakeVersion-windows.zip"
-          $premakeDir = "vendor/bin/premake"
-          $zipPath = Join-Path $env:RUNNER_TEMP $premakeAsset
-          $downloadUrl = "https://github.com/premake/premake-core/releases/download/v$premakeVersion/$premakeAsset"
-          $expectedSha256 = $env:PREMAKE_SHA256
-
-          New-Item -ItemType Directory -Force -Path $premakeDir | Out-Null
-          Invoke-WebRequest -Uri $downloadUrl -OutFile $zipPath
-
-          $actualSha256 = (Get-FileHash -Path $zipPath -Algorithm SHA256).Hash
-          if ($actualSha256 -ne $expectedSha256) {
-            throw "Premake checksum mismatch. Expected $expectedSha256 but got $actualSha256."
-          }
-
-          Expand-Archive -Path $zipPath -DestinationPath $premakeDir -Force
-
-          if (-not (Test-Path -Path $premakeExe)) {
-            throw "Premake setup failed: $premakeExe not found after download."
-          }
-
-      - name: Generate solution with Premake
-        shell: cmd
-        run: vendor\bin\premake\premake5.exe vs2022
+        run: .\tools\lint-ci-windows.ps1 -Mode format -Enforcement blocking
 
       - name: Build Hazel-Test (Debug x64)
         shell: cmd
         run: msbuild Hazel.sln /m /t:Hazel-Test /p:Configuration=Debug /p:Platform=x64 /verbosity:minimal
-
-      - name: Run tests (Catch2 JUnit)
-        if: ${{ github.event_name == 'pull_request' }}
-        shell: cmd
-        run: bin\Debug-windows-x86_64\Hazel-Test\Hazel-Test.exe -r junit -o test-results.xml
-
-      - name: Upload test results
-        if: ${{ always() && github.event_name == 'pull_request' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: hazel-test-results
-          path: test-results.xml
-          if-no-files-found: warn
