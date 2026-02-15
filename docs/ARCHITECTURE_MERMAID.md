@@ -461,7 +461,7 @@ graph TB
 
 ### Platform Layer (플랫폼 레이어)
 - 플랫폼별 구현을 추상화합니다
-- 현재는 Windows/GLFW 구현만 제공합니다
+- 현재는 Windows + macOS(dev scope) GLFW 구현을 제공합니다
 - 다른 플랫폼 지원 시 쉽게 확장 가능합니다
 
 ### Build System (빌드 시스템)

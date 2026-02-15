@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef HZ_PLATFORM_WINDOWS
+#if defined(HZ_PLATFORM_WINDOWS) || defined(HZ_PLATFORM_MACOS)
 
 extern Hazel::Application* Hazel::CreateApplication();
 

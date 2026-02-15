@@ -1,6 +1,7 @@
 #!/bin/sh
 
-pwsh -NoProfile -ExecutionPolicy Bypass -File "./tools/lint.ps1" -Mode all -Enforcement blocking
+repo_root=$(git rev-parse --show-toplevel)
+"$repo_root/tools/lint-precommit.sh"
 status=$?
 
 if [ $status -ne 0 ]; then

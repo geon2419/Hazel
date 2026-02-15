@@ -1,6 +1,4 @@
 workspace "Hazel"
-	architecture "x64"
-
 	configurations
 	{
 		"Debug",
@@ -20,17 +18,26 @@ IncludeDir["ImGui"] = "Hazel/vendor/imgui"
 IncludeDir["glm"] = "Hazel/vendor/glm"
 IncludeDir["Catch2"] = "Hazel/vendor/Catch2"
 
-
 local function DisableVcpkg(prj)
 	premake.w('<VcpkgEnabled>false</VcpkgEnabled>')
 end
 
-require("vstudio")
-premake.override(premake.vstudio.vc2010.elements, "globals", function(base, prj)
-	local calls = base(prj)
-	table.insert(calls, DisableVcpkg)
-	return calls
-end)
+if _ACTION and _ACTION:find("^vs") then
+	require("vstudio")
+	premake.override(premake.vstudio.vc2010.elements, "globals", function(base, prj)
+		local calls = base(prj)
+		table.insert(calls, DisableVcpkg)
+		return calls
+	end)
+end
+
+filter "system:windows"
+	architecture "x64"
+
+filter "system:macosx"
+	architecture "ARM64"
+
+filter {}
 
 include "Hazel/vendor/GLFW"
 include "Hazel/vendor/Glad"
@@ -70,12 +77,20 @@ project "Hazel"
 		"%{IncludeDir.glm}"
 	}
 
+	externalincludedirs
+	{
+		"%{prj.name}/vendor/spdlog/include",
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.ImGui}",
+		"%{IncludeDir.glm}"
+	}
+
 	links
 	{
 		"GLFW",
 		"Glad",
-		"ImGui",
-		"opengl32.lib"
+		"ImGui"
 	}
 
 	pchheader "hzpch.h"
@@ -91,7 +106,22 @@ project "Hazel"
 			"GLFW_INCLUDE_NONE"
 		}
 
+		links
+		{
+			"opengl32.lib"
+		}
+
 		buildoptions { "/utf-8" }
+
+	filter "system:macosx"
+		defines
+		{
+			"HZ_PLATFORM_MACOS",
+			"GLFW_INCLUDE_NONE",
+			"GL_SILENCE_DEPRECATION"
+		}
+
+		pchheader "src/hzpch.h"
 
 	filter "configurations:Debug"
 		defines "HZ_DEBUG"
@@ -137,6 +167,12 @@ project "Sandbox"
 		"%{IncludeDir.glm}"
 	}
 
+	externalincludedirs
+	{
+		"Hazel/vendor/spdlog/include",
+		"%{IncludeDir.glm}"
+	}
+
 	links
 	{
 		"Hazel",
@@ -152,6 +188,22 @@ project "Sandbox"
 		}
 
 		buildoptions { "/utf-8" }
+
+	filter "system:macosx"
+		defines
+		{
+			"HZ_PLATFORM_MACOS",
+			"GLFW_INCLUDE_NONE",
+			"GL_SILENCE_DEPRECATION"
+		}
+
+		links
+		{
+			"Cocoa.framework",
+			"IOKit.framework",
+			"CoreVideo.framework",
+			"OpenGL.framework"
+		}
 
 	filter "configurations:Debug"
 		defines "HZ_DEBUG"
@@ -198,6 +250,13 @@ project "Hazel-Test"
 		"%{IncludeDir.Catch2}"
 	}
 
+	externalincludedirs
+	{
+		"Hazel/vendor/spdlog/include",
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.Catch2}"
+	}
+
 	links
 	{
 		"Hazel"
@@ -212,6 +271,22 @@ project "Hazel-Test"
 		}
 
 		buildoptions { "/utf-8" }
+
+	filter "system:macosx"
+		defines
+		{
+			"HZ_PLATFORM_MACOS",
+			"GLFW_INCLUDE_NONE",
+			"GL_SILENCE_DEPRECATION"
+		}
+
+		links
+		{
+			"Cocoa.framework",
+			"IOKit.framework",
+			"CoreVideo.framework",
+			"OpenGL.framework"
+		}
 
 	filter "configurations:Debug"
 		defines "HZ_DEBUG"
@@ -233,4 +308,4 @@ project "Hazel-Test"
 		runtime "Release"
 		optimize "on"
 
-
+filter {}

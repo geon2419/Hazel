@@ -42,8 +42,18 @@ void WindowsWindow::Init(const WindowProps& props)
 		s_GLFWInitialized = true;
 	}
 
+#ifdef HZ_PLATFORM_MACOS
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+#endif
+
 	m_Window = glfwCreateWindow(static_cast<int>(props.Width), static_cast<int>(props.Height), m_Data.Title.c_str(),
 	                            nullptr, nullptr);
+
+	HZ_CORE_ASSERT(m_Window, "Failed to create GLFW window!");
+
 	m_Context = std::make_unique<OpenGLContext>(m_Window);
 	m_Context->Init();
 
