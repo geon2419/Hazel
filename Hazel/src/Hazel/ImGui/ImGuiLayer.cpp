@@ -6,7 +6,7 @@
 #include "backends/imgui_impl_opengl3.h"
 
 #include "Hazel/Application.h"
-#include <Hazel/Core.h>
+#include "Hazel/Core.h"
 
 // NOTE: Temporary
 #include "GLFW/glfw3.h"

@@ -18,6 +18,11 @@ project "Glad"
 		"include"
 	}
 
+	externalincludedirs
+	{
+		"include"
+	}
+
 	filter "system:windows"
 		systemversion "latest"
 

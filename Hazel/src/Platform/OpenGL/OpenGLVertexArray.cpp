@@ -6,6 +6,17 @@
 
 namespace Hazel
 {
+static void CreateVertexArray(GLuint& rendererID)
+{
+	if (GLAD_GL_VERSION_4_5 && glCreateVertexArrays)
+	{
+		glCreateVertexArrays(1, &rendererID);
+		return;
+	}
+
+	glGenVertexArrays(1, &rendererID);
+}
+
 static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
 {
 	switch (type)
@@ -37,7 +48,7 @@ static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
 	return 0;
 }
 
-OpenGLVertexArray::OpenGLVertexArray() { glCreateVertexArrays(1, &m_RendererID); }
+OpenGLVertexArray::OpenGLVertexArray() { CreateVertexArray(m_RendererID); }
 
 OpenGLVertexArray::~OpenGLVertexArray() { glDeleteVertexArrays(1, &m_RendererID); }
 

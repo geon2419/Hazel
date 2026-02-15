@@ -200,7 +200,7 @@ jobs:
 
       - name: Run lint (advisory)
         shell: pwsh
-        run: .\tools\lint.ps1 -Mode all -Enforcement advisory
+        run: .\tools\lint-ci-windows.ps1 -Mode all -Enforcement advisory
 
   windows-debug-tests:
     name: ci/windows-debug-tests

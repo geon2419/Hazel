@@ -1,17 +1,29 @@
 #pragma once
 
-#ifdef HZ_PLATFORM_WINDOWS
+#if defined(HZ_PLATFORM_MACOS)
+#include <csignal>
+#endif
+
+#if defined(HZ_PLATFORM_WINDOWS)
 #if HZ_DYNAMIC_LINK
 #ifdef HZ_BUILD_DLL
-#define __declspec(dllexport)
+#define HAZEL_API __declspec(dllexport)
 #else
-#define __declspec(dllimport)
+#define HAZEL_API __declspec(dllimport)
 #endif
 #else
 #define HAZEL_API
 #endif
+#elif defined(HZ_PLATFORM_MACOS)
+#define HAZEL_API
+#endif
+
+#if defined(HZ_PLATFORM_WINDOWS)
+#define HZ_DEBUGBREAK() __debugbreak()
+#elif defined(HZ_PLATFORM_MACOS)
+#define HZ_DEBUGBREAK() raise(SIGTRAP)
 #else
-#error Hazel only supports Windows!
+#define HZ_DEBUGBREAK()
 #endif
 
 #ifdef HZ_ENABLE_ASSERTS
@@ -20,7 +32,7 @@
 		if (!(x))                                                                                                      \
 		{                                                                                                              \
 			HZ_ERROR("Assertion Failed: {0}", __VA_ARGS__);                                                            \
-			__debugbreak();                                                                                            \
+			HZ_DEBUGBREAK();                                                                                           \
 		}                                                                                                              \
 	}
 #define HZ_CORE_ASSERT(x, ...)                                                                                         \
@@ -28,7 +40,7 @@
 		if (!(x))                                                                                                      \
 		{                                                                                                              \
 			HZ_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__);                                                       \
-			__debugbreak();                                                                                            \
+			HZ_DEBUGBREAK();                                                                                           \
 		}                                                                                                              \
 	}
 #else
