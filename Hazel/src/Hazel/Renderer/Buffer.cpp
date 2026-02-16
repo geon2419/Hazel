@@ -1,6 +1,6 @@
+#include "hzpch.h"
 #include "Buffer.h"
 #include "Hazel/Core.h"
-#include "hzpch.h"
 
 #include "Renderer.h"
 #include "RendererAPI.h"

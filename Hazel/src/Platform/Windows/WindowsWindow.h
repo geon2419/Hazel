@@ -3,6 +3,9 @@
 #include "Hazel/Renderer/GraphicsContext.h"
 #include "Hazel/Window.h"
 
+#include <memory>
+#include <string>
+
 #include <GLFW/glfw3.h>
 
 struct GLFWwindow;

@@ -5,4 +5,6 @@ Standard: c++17
 DerivePointerAlignment: false
 PointerAlignment: Left
 ReferenceAlignment: Left
+SortIncludes: Never
+IncludeBlocks: Preserve
 ...

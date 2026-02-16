@@ -1,5 +1,5 @@
-#include "WindowsWindow.h"
 #include "hzpch.h"
+#include "WindowsWindow.h"
 
 #include "Hazel/Events/ApplicationEvent.h"
 #include "Hazel/Events/KeyEvent.h"

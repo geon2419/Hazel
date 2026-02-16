@@ -1,5 +1,5 @@
-#include "ImGuiLayer.h"
 #include "hzpch.h"
+#include "ImGuiLayer.h"
 
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"

@@ -4,6 +4,8 @@
 #include "Hazel/Core/Timestep.h"
 #include "Hazel/Events/Event.h"
 
+#include <string>
+
 namespace Hazel
 {
 class Layer
