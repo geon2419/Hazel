@@ -1,9 +1,9 @@
-#include "hzpch.h"
 #include "ImGuiLayer.h"
+#include "hzpch.h"
 
-#include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#include "imgui.h"
 
 #include "Hazel/Application.h"
 #include "Hazel/Core.h"
@@ -14,90 +14,94 @@
 
 namespace Hazel
 {
-ImGuiLayer::ImGuiLayer() : Layer("ImGuiLayer") {}
+ImGuiLayer::ImGuiLayer() : Layer("ImGuiLayer")
+{
+}
 
-ImGuiLayer::~ImGuiLayer() {}
+ImGuiLayer::~ImGuiLayer()
+{
+}
 
 void ImGuiLayer::OnAttach()
 {
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	static_cast<void>(io);
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    static_cast<void>(io);
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-	ImGui::StyleColorsDark();
+    ImGui::StyleColorsDark();
 
-	ImGuiStyle& style = ImGui::GetStyle();
-	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		style.WindowRounding = 0.0f;
-		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-	}
+    ImGuiStyle& style = ImGui::GetStyle();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    }
 
-	Application& app = Application::Get();
-	GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+    Application& app = Application::Get();
+    GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
-	// NOTE: HiDPI
-	float xscale = 1.0f;
-	float yscale = 1.0f;
-	glfwGetWindowContentScale(window, &xscale, &yscale);
-	float scale = (xscale > 0.0f) ? xscale : 1.0f;
-	io.FontGlobalScale = scale;
-	ImGui::GetStyle().ScaleAllSizes(scale);
+    // NOTE: HiDPI
+    float xscale = 1.0f;
+    float yscale = 1.0f;
+    glfwGetWindowContentScale(window, &xscale, &yscale);
+    float scale = (xscale > 0.0f) ? xscale : 1.0f;
+    io.FontGlobalScale = scale;
+    ImGui::GetStyle().ScaleAllSizes(scale);
 
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
-	ImGui_ImplOpenGL3_Init("#version 410");
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 410");
 }
 
 void ImGuiLayer::OnDetach()
 {
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 }
 
 void ImGuiLayer::OnImGuiRender()
 {
-	static bool show = true;
-	ImGui::ShowDemoWindow(&show);
+    static bool show = true;
+    ImGui::ShowDemoWindow(&show);
 }
 
 void ImGuiLayer::Begin()
 {
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
 }
 
 void ImGuiLayer::End()
 {
-	ImGuiIO& io = ImGui::GetIO();
-	Application& app = Application::Get();
-	io.DisplaySize =
-	    ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
+    ImGuiIO& io = ImGui::GetIO();
+    Application& app = Application::Get();
+    io.DisplaySize =
+        ImVec2(static_cast<float>(app.GetWindow().GetWidth()), static_cast<float>(app.GetWindow().GetHeight()));
 
-	// NOTE: HiDPI
-	GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
-	int framebufferWidth = 0;
-	int framebufferHeight = 0;
-	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
-	if (io.DisplaySize.x > 0.0f && io.DisplaySize.y > 0.0f)
-		io.DisplayFramebufferScale = ImVec2(static_cast<float>(framebufferWidth) / io.DisplaySize.x,
-		                                    static_cast<float>(framebufferHeight) / io.DisplaySize.y);
+    // NOTE: HiDPI
+    GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+    int framebufferWidth = 0;
+    int framebufferHeight = 0;
+    glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+    if (io.DisplaySize.x > 0.0f && io.DisplaySize.y > 0.0f)
+        io.DisplayFramebufferScale = ImVec2(static_cast<float>(framebufferWidth) / io.DisplaySize.x,
+                                            static_cast<float>(framebufferHeight) / io.DisplaySize.y);
 
-	// Rendering
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    // Rendering
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		GLFWwindow* backup_current_context = glfwGetCurrentContext();
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
-		glfwMakeContextCurrent(backup_current_context);
-	}
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        GLFWwindow* backup_current_context = glfwGetCurrentContext();
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        glfwMakeContextCurrent(backup_current_context);
+    }
 }
 } // namespace Hazel
