@@ -1,12 +1,10 @@
 ---
 Language: Cpp
-BasedOnStyle: LLVM
+BasedOnStyle: Microsoft
 Standard: c++17
-IndentWidth: 4
-TabWidth: 4
-UseTab: ForIndentation
-BreakBeforeBraces: Allman
-ColumnLimit: 120
-SortIncludes: false
+DerivePointerAlignment: false
 PointerAlignment: Left
+ReferenceAlignment: Left
+SortIncludes: Never
+IncludeBlocks: Preserve
 ...
