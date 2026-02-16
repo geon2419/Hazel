@@ -197,7 +197,7 @@ jobs:
 
       - name: Run lint (format, blocking)
         shell: pwsh
-        run: .\tools\lint-ci-windows.ps1 -Mode format -Enforcement blocking
+        run: .\tools\lint.ps1 -Mode format -Enforcement blocking
 
       - name: Build Hazel-Test (Debug x64)
         shell: cmd

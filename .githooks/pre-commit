@@ -1,8 +1,28 @@
 #!/bin/sh
 
 repo_root=$(git rev-parse --show-toplevel)
-"$repo_root/tools/lint-precommit.sh"
-status=$?
+uname_output="$(uname -s)"
+status=0
+
+case "$uname_output" in
+  MINGW*|MSYS*|CYGWIN*)
+    if command -v pwsh >/dev/null 2>&1; then
+      pwsh -NoProfile -ExecutionPolicy Bypass -File "$repo_root/tools/lint-precommit.ps1"
+      status=$?
+    elif command -v powershell.exe >/dev/null 2>&1; then
+      powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$repo_root/tools/lint-precommit.ps1"
+      status=$?
+    else
+      echo "pre-commit: PowerShell not found on PATH (detected OS: Windows (Git Bash))"
+      echo "Install PowerShell 7 (pwsh) or ensure powershell.exe is available."
+      status=1
+    fi
+    ;;
+  *)
+    "$repo_root/tools/lint-precommit.sh"
+    status=$?
+    ;;
+esac
 
 if [ $status -ne 0 ]; then
   echo "pre-commit: lint failed"

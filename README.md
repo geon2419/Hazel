@@ -37,10 +37,18 @@
 
 ### Lint
 
-- Lint(Auto format): `./tools/lint-local.sh`
+#### macOS/Linux (Bash)
+
 - Lint(Check only): `./tools/lint-local.sh --check`
+- Lint(Auto format): `./tools/lint-local.sh --fix`
 - Pre-Commit(Check staged changes only): `./tools/lint-precommit.sh`
-- Windows CI lint(Warning gate): `pwsh ./tools/lint-ci-windows.ps1 -Mode all -Enforcement advisory`
+
+#### Windows (PowerShell)
+
+- Lint(Check only): `pwsh ./tools/lint.ps1 -Mode format -Enforcement blocking`
+- Lint(Auto format): `pwsh ./tools/lint.ps1 -Mode format -Fix -Enforcement blocking`
+- Lint(Format + warnings): `pwsh ./tools/lint.ps1 -Mode all -Enforcement advisory`
+- Pre-Commit(Check staged changes only): `pwsh ./tools/lint-precommit.ps1`
 
 ## Reference
 
