@@ -44,6 +44,18 @@ include "Hazel/vendor/Glad"
 include "Hazel/vendor/imgui"
 -- include "Hazel/vendor/glm"
 
+project "Hazel-Config"
+	location "."
+	kind "Utility"
+	language "C++"
+
+	files
+	{
+		".clang-format",
+		"premake5.lua",
+		"tools/lint.ps1"
+	}
+
 project "Hazel"
 	location "Hazel"
 	kind "StaticLib"
