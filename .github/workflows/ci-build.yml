@@ -1,11 +1,7 @@
 name: ci-build
 
 on:
-  merge_group:
-    types:
-      - checks_requested
-    branches:
-      - main
+  workflow_dispatch:
 
 permissions:
   contents: read
