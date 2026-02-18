@@ -164,8 +164,11 @@ class ExampleLayer : public Hazel::Layer
 
         m_Texture = Hazel::Texture2D::Create("assets/textures/Checkerboard.png");
 
-        std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_TextureShader)->Bind();
-        std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
+        m_TextureShader->Bind();
+        auto textureShader = std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_TextureShader);
+        textureShader->UploadUniformInt("u_Texture", 0);
+        // std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_TextureShader)->Bind();
+        // std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_TextureShader)->UploadUniformInt("u_Texture", 0);
     }
 
     void OnUpdate(Hazel::Timestep timestep) override
@@ -207,9 +210,12 @@ class ExampleLayer : public Hazel::Layer
 
         glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
-        std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->Bind();
-        std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)
-            ->UploadUniformFloat3("u_Color", m_SquareColor);
+        m_FlatColorShader->Bind();
+        auto flatColorShader = std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader);
+        flatColorShader->UploadUniformFloat3("u_Color", m_SquareColor);
+        // std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->Bind();
+        // std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)
+        //     ->UploadUniformFloat3("u_Color", m_SquareColor);
 
         for (int y = 0; y < 20; y++)
         {
