@@ -9,7 +9,7 @@ class OpenGLTexture2D : public Texture2D
 {
   public:
     OpenGLTexture2D(const std::string& path);
-    virtual ~OpenGLTexture2D();
+    virtual ~OpenGLTexture2D() override;
 
     virtual uint32_t GetWidth() const override
     {

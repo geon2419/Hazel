@@ -17,7 +17,7 @@ IncludeDir["Glad"] = "Hazel/vendor/Glad/include"
 IncludeDir["ImGui"] = "Hazel/vendor/imgui"
 IncludeDir["glm"] = "Hazel/vendor/glm"
 IncludeDir["Catch2"] = "Hazel/vendor/Catch2"
-IncludeDir["stb_image"] = "Hazel/vendor/std_image"
+IncludeDir["stb_image"] = "Hazel/vendor/stb_image"
 
 local function DisableVcpkg(prj)
 	premake.w('<VcpkgEnabled>false</VcpkgEnabled>')
