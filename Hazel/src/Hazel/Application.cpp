@@ -3,6 +3,7 @@
 
 #include "Core.h"
 #include "Hazel/ImGui/ImGuiLayer.h"
+#include "Renderer/Renderer.h"
 
 #include <GLFW/glfw3.h>
 
@@ -20,6 +21,8 @@ Application::Application()
 
     m_Window = Window::Create();
     m_Window->SetEventCallback(BIND_EVENT_FN(OnEvent));
+
+    Renderer::Init();
 
     m_ImGuiLayer = new ImGuiLayer();
     PushOverlay(m_ImGuiLayer);
