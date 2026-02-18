@@ -17,6 +17,7 @@ IncludeDir["Glad"] = "Hazel/vendor/Glad/include"
 IncludeDir["ImGui"] = "Hazel/vendor/imgui"
 IncludeDir["glm"] = "Hazel/vendor/glm"
 IncludeDir["Catch2"] = "Hazel/vendor/Catch2"
+IncludeDir["stb_image"] = "Hazel/vendor/stb_image"
 
 local function DisableVcpkg(prj)
 	premake.w('<VcpkgEnabled>false</VcpkgEnabled>')
@@ -44,6 +45,18 @@ include "Hazel/vendor/Glad"
 include "Hazel/vendor/imgui"
 -- include "Hazel/vendor/glm"
 
+project "Hazel-Config"
+	location "."
+	kind "Utility"
+	language "C++"
+
+	files
+	{
+		".clang-format",
+		"premake5.lua",
+		"tools/lint.ps1"
+	}
+
 project "Hazel"
 	location "Hazel"
 	kind "StaticLib"
@@ -58,6 +71,8 @@ project "Hazel"
 	{
 		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/vendor/std_image/**.h",
+		"%{prj.name}/vendor/std_image/**.cpp",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
@@ -74,7 +89,8 @@ project "Hazel"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.ImGui}",
-		"%{IncludeDir.glm}"
+		"%{IncludeDir.glm}",
+		"%{IncludeDir.stb_image}",
 	}
 
 	externalincludedirs
