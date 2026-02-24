@@ -10,25 +10,25 @@ namespace Hazel
 
 class MockLayer : public Layer
 {
-    public:
-        explicit MockLayer(const std::string& name) : Layer(name)
-        {
-        }
+public:
+    explicit MockLayer(const std::string& name) : Layer(name)
+    {
+    }
 };
 
 class CountingLayer : public Layer
 {
-    public:
-        static int DestructorCallCount;
+public:
+    static int DestructorCallCount;
 
-        explicit CountingLayer(const std::string& name) : Layer(name)
-        {
-        }
+    explicit CountingLayer(const std::string& name) : Layer(name)
+    {
+    }
 
-        ~CountingLayer() override
-        {
-            ++DestructorCallCount;
-        }
+    ~CountingLayer() override
+    {
+        ++DestructorCallCount;
+    }
 };
 
 int CountingLayer::DestructorCallCount = 0;

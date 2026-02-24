@@ -11,18 +11,18 @@ namespace Hazel
 
 class ImGuiLayer : public Layer
 {
-    public:
-        ImGuiLayer();
-        ~ImGuiLayer();
+public:
+    ImGuiLayer();
+    ~ImGuiLayer();
 
-        virtual void OnAttach() override;
-        virtual void OnDetach() override;
-        virtual void OnImGuiRender() override;
+    virtual void OnAttach() override;
+    virtual void OnDetach() override;
+    virtual void OnImGuiRender() override;
 
-        void Begin();
-        void End();
+    void Begin();
+    void End();
 
-    private:
-        float m_Time = 0.0f;
+private:
+    float m_Time = 0.0f;
 };
 } // namespace Hazel

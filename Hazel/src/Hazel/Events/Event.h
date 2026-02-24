@@ -57,52 +57,52 @@ enum EventCategory
 
 class Event
 {
-        friend class EventDispatcher;
+    friend class EventDispatcher;
 
-    public:
-        virtual EventType GetEventType() const = 0;
-        virtual const char* GetName() const = 0;
-        virtual int GetCategoryFlags() const = 0;
-        virtual std::string ToString() const
-        {
-            return GetName();
-        }
+public:
+    virtual EventType GetEventType() const = 0;
+    virtual const char* GetName() const = 0;
+    virtual int GetCategoryFlags() const = 0;
+    virtual std::string ToString() const
+    {
+        return GetName();
+    }
 
-        inline bool IsInCategory(EventCategory category)
-        {
-            return GetCategoryFlags() & category;
-        }
+    inline bool IsInCategory(EventCategory category)
+    {
+        return GetCategoryFlags() & category;
+    }
 
-        inline bool IsHandled() const
-        {
-            return m_Handled;
-        }
+    inline bool IsHandled() const
+    {
+        return m_Handled;
+    }
 
-    protected:
-        bool m_Handled = false;
+protected:
+    bool m_Handled = false;
 };
 
 class EventDispatcher
 {
-        template <typename T> using EventFn = std::function<bool(T&)>;
+    template <typename T> using EventFn = std::function<bool(T&)>;
 
-    public:
-        EventDispatcher(Event& event) : m_Event(event)
+public:
+    EventDispatcher(Event& event) : m_Event(event)
+    {
+    }
+
+    template <typename T> bool Dispatch(EventFn<T> func)
+    {
+        if (m_Event.GetEventType() == T::GetStaticType())
         {
+            m_Event.m_Handled = func(static_cast<T&>(m_Event));
+            return true;
         }
+        return false;
+    }
 
-        template <typename T> bool Dispatch(EventFn<T> func)
-        {
-            if (m_Event.GetEventType() == T::GetStaticType())
-            {
-                m_Event.m_Handled = func(static_cast<T&>(m_Event));
-                return true;
-            }
-            return false;
-        }
-
-    private:
-        Event& m_Event;
+private:
+    Event& m_Event;
 };
 
 inline std::ostream& operator<<(std::ostream& os, const Event& e)
