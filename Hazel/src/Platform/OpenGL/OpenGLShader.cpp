@@ -99,7 +99,7 @@ void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shader
         const GLchar* sourceCStr = source.c_str();
         glShaderSource(shader, 1, &sourceCStr, 0);
 
-        // Compile the vertex shader
+        // Compile the shader
         glCompileShader(shader);
 
         GLint isCompiled = 0;
