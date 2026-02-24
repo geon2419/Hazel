@@ -3,7 +3,8 @@ Language: Cpp
 BasedOnStyle: Microsoft
 Standard: c++17
 IndentWidth: 4
-IndentAccessModifiers: true
+IndentAccessModifiers: false
+AccessModifierOffset: -4
 DerivePointerAlignment: false
 PointerAlignment: Left
 ReferenceAlignment: Left

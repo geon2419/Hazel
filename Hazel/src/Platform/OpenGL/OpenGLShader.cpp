@@ -25,9 +25,16 @@ OpenGLShader::OpenGLShader(const std::string& filepath)
     std::string source = ReadFile(filepath);
     auto shaderSources = PreProcess(source);
     Compile(shaderSources);
+
+    // Extract name from filepath
+    size_t lastSlash = filepath.find_last_of("/\\");
+    lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+    size_t lastDot = filepath.rfind('.');
+    m_Name = filepath.substr(lastSlash, lastDot - lastSlash);
 }
 
-OpenGLShader::OpenGLShader(const std::string& vertexSource, const std::string& fragmentSource)
+OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSource, const std::string& fragmentSource)
+    : m_Name(name)
 {
     std::unordered_map<GLenum, std::string> shaderSources;
     shaderSources[GL_VERTEX_SHADER] = vertexSource;
@@ -43,7 +50,7 @@ OpenGLShader::~OpenGLShader()
 std::string OpenGLShader::ReadFile(const std::string& filepath)
 {
     std::string result;
-    std::ifstream in(filepath, std::ios::in, std::ios::binary);
+    std::ifstream in(filepath, std::ios::in | std::ios::binary);
     if (in)
     {
         in.seekg(0, std::ios::end);
@@ -87,7 +94,9 @@ std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::stri
 void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)
 {
     GLuint program = glCreateProgram();
-    std::vector<GLenum> glShaderIDs(shaderSources.size());
+    HZ_CORE_ASSERT(shaderSources.size() <= 2, "We only support 2 shaders for now (Vertex and Fragment)");
+    std::array<GLenum, 2> glShaderIDs;
+    int glShaderIDIndex = 0;
 
     for (auto& kv : shaderSources)
     {
@@ -122,7 +131,7 @@ void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shader
         }
 
         glAttachShader(program, shader);
-        glShaderIDs.push_back(shader);
+        glShaderIDs[glShaderIDIndex++] = shader;
     }
 
     // Link our program
