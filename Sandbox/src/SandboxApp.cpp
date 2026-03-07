@@ -1,5 +1,5 @@
 #include "Hazel.h"
-#include "Hazel/Core.h"
+#include "Hazel/Core/Core.h"
 
 #include "Platform/OpenGL/OpenGLShader.h"
 

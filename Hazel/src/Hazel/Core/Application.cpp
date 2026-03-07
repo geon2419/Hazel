@@ -3,7 +3,7 @@
 
 #include "Core.h"
 #include "Hazel/ImGui/ImGuiLayer.h"
-#include "Renderer/Renderer.h"
+#include "Hazel/Renderer/Renderer.h"
 
 #include <GLFW/glfw3.h>
 
