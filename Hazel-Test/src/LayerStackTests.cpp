@@ -1,7 +1,7 @@
 #include "catch.hpp"
 
-#include "Hazel/Layer.h"
-#include "Hazel/LayerStack.h"
+#include "Hazel/Core/Layer.h"
+#include "Hazel/Core/LayerStack.h"
 
 #include <vector>
 
