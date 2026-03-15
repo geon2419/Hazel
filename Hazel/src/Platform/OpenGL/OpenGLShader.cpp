@@ -1,6 +1,8 @@
 #include "hzpch.h"
 #include "OpenGLShader.h"
 
+#include "Hazel/Core/FileSystem.h"
+
 #include <fstream>
 #include <glad/glad.h>
 
@@ -50,7 +52,8 @@ OpenGLShader::~OpenGLShader()
 std::string OpenGLShader::ReadFile(const std::string& filepath)
 {
     std::string result;
-    std::ifstream in(filepath, std::ios::in | std::ios::binary);
+    const auto resolvedPath = FileSystem::ResolvePath(filepath);
+    std::ifstream in(resolvedPath, std::ios::in | std::ios::binary);
     if (in)
     {
         in.seekg(0, std::ios::end);
@@ -61,7 +64,10 @@ std::string OpenGLShader::ReadFile(const std::string& filepath)
     }
     else
     {
-        HZ_CORE_ERROR("Could not open file '{0}'", filepath);
+        if (resolvedPath != filepath)
+            HZ_CORE_ERROR("Could not open file '{0}' (resolved to '{1}')", filepath, resolvedPath.string());
+        else
+            HZ_CORE_ERROR("Could not open file '{0}'", filepath);
     }
 
     return result;
