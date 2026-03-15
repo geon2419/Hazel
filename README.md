@@ -39,8 +39,8 @@
 
 #### macOS/Linux (Bash)
 
-- Lint(Check only): `./tools/lint-local.sh --check`
-- Lint(Auto format): `./tools/lint-local.sh --fix`
+- Lint(Check only): `./tools/lint.sh --check`
+- Lint(Auto format): `./tools/lint.sh --fix`
 - Pre-Commit(Check staged changes only): `./tools/lint-precommit.sh`
 
 #### Windows (PowerShell)

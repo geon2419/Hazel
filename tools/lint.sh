@@ -10,13 +10,13 @@ if [ "${1:-}" = "--check" ]; then
 elif [ "${1:-}" = "--fix" ] || [ -z "${1:-}" ]; then
     mode="fix"
 elif [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
-    echo "Usage: ./tools/lint-local.sh [--check|--fix]"
+    echo "Usage: ./tools/lint.sh [--check|--fix]"
     echo "  --check : validate formatting only (no file changes)"
     echo "  --fix   : apply clang-format to all target files (default)"
     exit 0
 else
     echo "local lint: unknown option '${1:-}'"
-    echo "Usage: ./tools/lint-local.sh [--check|--fix]"
+    echo "Usage: ./tools/lint.sh [--check|--fix]"
     exit 2
 fi
 
